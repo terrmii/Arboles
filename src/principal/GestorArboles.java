@@ -83,23 +83,38 @@ public class GestorArboles {
 	            	id = Integer.parseInt(scan.nextLine());
 	            	
 	            	
-	            	System.out.println("Que desea modificar: (nombreComun, nombreCientifico, habitat, origen, altura)");
+	            	System.out.println("Que desea modificar: (nombre comun, nombre cientifico, habitat, origen, altura)");
 	            	String modificar = scan.nextLine().toLowerCase();
 	            	if(modificar.equals("nombre comun")) {
-	            		modificar = "nombreComun";
+	            		modificar = "nombre_comun";
+	            	}
+	            	else if(modificar.equals("nombre cientifico")) {
+	            		modificar = "nombre_cientifico";
+	            	}
+	            	else if(modificar.equals("id")) {
+	            		System.out.println("No se puede modificar el ID");
 	            	}
 	            	
-	            	System.out.println("Introduzca el nuevo valor: ");
-		            String nuevoValor = scan.nextLine();
+	            	
+	            	if(modificar.equals("nombre_comun") || modificar.equals("nombre_cientifico")||modificar.equals("habitat") || modificar.equals("origen") || modificar.equals("altura")) {
+	            		System.out.println("Introduzca el nuevo valor: " );
+			            String nuevoValor = scan.nextLine();
+			            
+			            String sentenciaActualizar = "UPDATE arbol SET `"+modificar+"` = '"+nuevoValor+"' WHERE `arbol`.`id` = "+id;
+			            st.execute(sentenciaActualizar);
+	            	}
+	            	else {
+	            		System.out.println("Introduzca un valor valido");
 	            		
-	            	String sentenciaActualizar = "UPDATE arbol SET `"+modificar+"` = '"+nuevoValor+"' WHERE `arbol`.`id` = "+id;
-		            st.execute(sentenciaActualizar);
+	            	}
+	            		break;
+	            	
 		            	
 	            	
 	            	
 	            	//UPDATE `arbol` SET `nombre_comun` = 'siso' WHERE `arbol`.`id` = 5
 	            	
-	                break;
+
 	            case OPCION_CUATRO:
 	            	String visualizarArboles = "SELECT * FROM arbol";
 	            	ResultSet resultado = st.executeQuery(visualizarArboles);
