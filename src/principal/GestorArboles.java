@@ -2,6 +2,7 @@ package principal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
@@ -20,9 +21,9 @@ public class GestorArboles {
 			Connection conexion;
 			
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			conexion = DriverManager.getConnection("jdbc:mysql://" + host + "/" + bbdd, username, password);
 			
-			Statement st = conexion.createStatement();
+			
+
 			
 			Scanner scan = new Scanner(System.in);
 			Arbol arbol = new Arbol();
@@ -47,8 +48,10 @@ public class GestorArboles {
 	            System.out.println(OPCION_TRES + ". Modificar informacion del arbol");
 	            System.out.println(OPCION_CUATRO +". Visualizar arboles");
 	            System.out.println(SALIR + ". Salir");
-
-	            opcion_menu = Integer.parseInt(scan.nextLine());
+	            conexion = DriverManager.getConnection("jdbc:mysql://" + host + "/" + bbdd, username, password);
+				Statement st = conexion.createStatement();
+				opcion_menu = scan.nextInt();
+				scan.nextLine();
 	            switch (opcion_menu) {
 	            case OPCION_UNO:
 	                System.out.println("Introduzca el nombre comun: ");
@@ -62,7 +65,8 @@ public class GestorArboles {
 	                System.out.println("Introduzca la altura: " );
 	                altura = scan.nextInt();
 	                st.execute("INSERT INTO arbol (nombre_comun, nombre_cientifico, habitat, altura, origen) VALUES ('"+nombreComun+"', '"+nombreCientifico+"', '"+habitat+"', "+altura+", '"+origen+"');");
-	                
+	                conexion.close();
+	                st.close();
 	                //INSERT INTO `arbol` (`id`, `nombre_comun`, `nombre_cientifico`, `habitat`, `altura`, `origen`) VALUES (NULL, 'roble', 'robledo', 'jungla', '2', 'Habitacion');
 	                break;
 	            case OPCION_DOS:
@@ -76,38 +80,35 @@ public class GestorArboles {
 	            case OPCION_TRES:
 	            	
 	            	System.out.println("Introduzca la ID del arbol que desee modificar: ");
-	            	id = scan.nextInt();
+	            	id = Integer.parseInt(scan.nextLine());
+	            	
+	            	
 	            	System.out.println("Que desea modificar: (nombreComun, nombreCientifico, habitat, origen, altura)");
-	            	String modificar = scan.nextLine();
-	         
-	            	if(modificar.equals("nombreComun") || modificar.equals("nombreCientifico")||modificar.equals("habitat") || modificar.equals("origen") || modificar.equals("altura")) {
-	            	  	System.out.println("Introduzca el nuevo valor: ");
-		            	String nuevoValor = scan.nextLine();
+	            	String modificar = scan.nextLine().toLowerCase();
+	            	if(modificar.equals("nombre comun")) {
+	            		modificar = "nombreComun";
+	            	}
+	            	
+	            	System.out.println("Introduzca el nuevo valor: ");
+		            String nuevoValor = scan.nextLine();
 	            		
-	            		String sentenciaActualizar = "UPDATE `arbol` SET `"+modificar+"` = '"+nuevoValor+"' WHERE `arbol`.`id` = "+id;
-		            	st.execute(sentenciaActualizar);
+	            	String sentenciaActualizar = "UPDATE arbol SET `"+modificar+"` = '"+nuevoValor+"' WHERE `arbol`.`id` = "+id;
+		            st.execute(sentenciaActualizar);
 		            	
-		             
-		            
-		           
-	            	}
-	            	//ERROR MODIFICAR
-	            	else {
-	            		System.out.println("Introduzca un campo correcto");
-	            	}
-	           
+	            	
 	            	
 	            	//UPDATE `arbol` SET `nombre_comun` = 'siso' WHERE `arbol`.`id` = 5
 	            	
-	            	//Hacer si existe
-//	            	if(null) {
-//	            		
-//	            	}
-//	            	else
-//	            		System.out.println("No existen arboles");
-//	                System.out.println("tercera opcion seleccionada\n");
 	                break;
 	            case OPCION_CUATRO:
+	            	String visualizarArboles = "SELECT * FROM arbol";
+	            	ResultSet resultado = st.executeQuery(visualizarArboles);
+	            	System.out.println("ID | NOMBRE COMUN | NOMBRE CIENTIFICO | HABITAT | ALTURA | ORIGEN");
+	            	while(resultado.next()) {
+	            		System.out.println(resultado.getInt(1)+" | "+resultado.getString(2)+" | "+resultado.getString(3)+" | "+resultado.getString(4)+" | "+resultado.getString(5)+" | "+resultado.getString(6));
+	            	}
+	            	
+	            	
 	            	
 	            	break;
 	            case SALIR:
@@ -119,8 +120,8 @@ public class GestorArboles {
 	        } while (opcion_menu != SALIR);
 	        
 	        conexion.close();
-		
-	       
+	        
+	        
 		}
 		
 	
